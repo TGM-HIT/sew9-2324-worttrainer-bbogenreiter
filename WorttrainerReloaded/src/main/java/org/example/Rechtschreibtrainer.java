@@ -10,34 +10,62 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Rechtschreibtrainer-Klasse, die aus den session.json Bilder und Namen lädt und diese als Rechtschreibspiel für Volksschulkinder darstellt.
+ * Autor: Bianca Bogenreiter
+ * Version: 2023-09-21
+ */
 public class Rechtschreibtrainer {
 
     private Paar aktPaar;
     private List<Paar> paarListe;
     private int alleVersuche;
     private int richtigeVersuche;
-    private final String FILE_PATH = "C:\\Users\\Franz\\OneDrive\\Schule5DHIT\\SEW\\Modul09a\\session.json";
+    //FILE_PATH muss an System angepasst werden
+    private final String FILE_PATH = "C:\\Users\\Franz\\OneDrive\\Schule5DHIT\\SEW\\Modul09a\\WorttrainerReloaded\\src\\main\\resources\\session.json";
+
+    /**
+     * Der Konstruktor, der das Spiel startet
+     */
     public Rechtschreibtrainer() {
+        //lädt die Paare aus der session.json und startet.
         this.loadSession();
         this.showSelection();
     }
 
+    /**
+     * Wählt ein Paar aus der Liste aus, das am angegebenen Index steht
+     * @param index Stelle des zu wählenden Paars
+     * @return void
+     */
     public void selectPaar(int index) {
+        //wenn der Index sinnvoll ist, wählt er das Paar aus
         if (index >= 0 && index < paarListe.size()) {
             aktPaar = paarListe.get(index);
         }
     }
 
+    /**
+     * Wählt ein Paar zufällig aus der Liste aus
+     * @return void
+     */
     public void selectRandomPaar() {
+        //wählt ein Zufallspaar aus wenn die Liste NICHT leer ist
         if (!paarListe.isEmpty()) {
             int randomIndex = (int) (Math.random() * paarListe.size());
             aktPaar = paarListe.get(randomIndex);
         }
     }
 
+    /**
+     * Überprüft, ob die Antwort des Users mit dem Bildernamen übereinstimmt.
+     * @param antwort Input des Users
+     * @return boolean zeigt ob die Antwort richtig oder falsch war
+     */
     public boolean checkAntwort(String antwort) {
+        //wenn ein Paar ausgewählt ist und die Antwort nicht null ist...
         if (aktPaar != null && antwort != null) {
+            //überprüft ob der Name stimmt und passt richtige Versuche und alle Versuche an
             if (antwort.equals(aktPaar.getBildname())) {
                 richtigeVersuche++;
                 alleVersuche++;
@@ -50,7 +78,12 @@ public class Rechtschreibtrainer {
         return false;
     }
 
+    /**
+     * Speichert die momentane Paar-Liste in das session.json
+     * @return void
+     */
     public void saveSession() {
+        //mithilfe ObjectMapper von com.fasterxml.jackson.core:jackson-databind:2.15.2 wird die Liste in das json-file gespeichert
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
@@ -60,7 +93,12 @@ public class Rechtschreibtrainer {
         }
     }
 
+    /**
+     * Lädt die Paar-Liste aus dem session.json
+     * @return void
+     */
     public void loadSession() {
+        //mithilfe ObjectMapper von com.fasterxml.jackson.core:jackson-databind:2.15.2 wird die Liste aus dem json-file geladen
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
@@ -78,13 +116,19 @@ public class Rechtschreibtrainer {
         }
     }
 
+    /**
+     * Zeigt 1 Bild solange an bis der dazupassende Name eingegeben wurde.
+     * @return void
+     */
     public void displayImageAndTakeGuess() {
         while (true) { // gleiches Bild bis richtig erraten
             if (aktPaar != null) {
+                //holt Name und URL
                 String imageUrl = String.valueOf(aktPaar.getBildurl());
                 String bildname = aktPaar.getBildname();
 
                 try {
+                    //Erstellt die GUI mit Bild und Eingabefenster zum Schreiben.
                     ImageIcon imageIcon = new ImageIcon(new URL(imageUrl));
                     imageIcon.setImage(imageIcon.getImage().getScaledInstance(250, 250, Image.SCALE_DEFAULT)); // Set the size
                     JLabel imageLabel = new JLabel(imageIcon);
@@ -109,6 +153,7 @@ public class Rechtschreibtrainer {
                         String userGuess = guessField.getText();
                         boolean isCorrect = checkAntwort(userGuess);
 
+                        //wenn das Wort richtig erkannt wird, wird die while-Schleife verlassen.
                         if (isCorrect) {
                             break;
                         }
@@ -120,11 +165,17 @@ public class Rechtschreibtrainer {
                 }
             }
         }
+        //nach Verlassen geht es zurück zur Auswahl
         showSelection();
     }
 
 
+    /**
+     * Zeigt die Selection-Übersicht an wo man ein Zufallsbild, ein Bild am Index oder "Ende" aussuchen kann.
+     * @return void
+     */
     public void showSelection() {
+        //gibt Bildauswahloptionen angepasst an die Anzahl der Paare in der Liste und eine Zufalls-Option
         String[] options = new String[paarListe.size() + 2];
         options[0] = "Zufall";
 
@@ -132,6 +183,7 @@ public class Rechtschreibtrainer {
             options[i + 1] = String.valueOf(i);
         }
 
+        //Unten wird ein "Ende" angefügt um das Programm zu verlassen und das Ergebnis zu sehen
         options[options.length - 1] = "Ende";
 
         String selectedOption = (String) JOptionPane.showInputDialog(
@@ -144,6 +196,7 @@ public class Rechtschreibtrainer {
                 options[0]
         );
 
+        //angepasst an die Auswahl wird der passende Programmschritt ausgeführt.
         if (selectedOption != null) {
             if (selectedOption.equals("Zufall")) {
                 selectRandomPaar();
@@ -157,7 +210,4 @@ public class Rechtschreibtrainer {
             }
         }
     }
-
-
-
 }
