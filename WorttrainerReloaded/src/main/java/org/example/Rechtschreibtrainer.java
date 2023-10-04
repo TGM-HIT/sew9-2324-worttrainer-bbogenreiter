@@ -22,20 +22,20 @@ public class Rechtschreibtrainer {
     private int alleVersuche;
     private int richtigeVersuche;
     //FILE_PATH muss an System angepasst werden
-    private final String FILE_PATH = "C:\\Users\\bianc\\OneDrive\\Schule5DHIT\\SEW\\Modul09a\\WorttrainerReloaded\\src\\main\\files\\session.json";
+    private SessionSaver sessionSaver; // Use the SessionSaver interface
 
     /**
      * Der Konstruktor, der das Spiel startet
      */
-    public Rechtschreibtrainer(int startOrNot) {
-        //lädt die Paare aus der session.json und startet.
-        if(startOrNot == 1){
+    public Rechtschreibtrainer(int startOrNot, SessionSaver sessionSaver) {
+        this.sessionSaver = sessionSaver; // Inject the session saver strategy
+
+        if (startOrNot == 1) {
             this.loadSession();
             this.showSelection();
-        }else if(startOrNot==0){
+        } else if (startOrNot == 0) {
             this.loadSession();
         }
-
     }
 
     /**
@@ -88,11 +88,8 @@ public class Rechtschreibtrainer {
      * @return void
      */
     public void saveSession() {
-        //mithilfe ObjectMapper von com.fasterxml.jackson.core:jackson-databind:2.15.2 wird die Liste in das json-file gespeichert
-        ObjectMapper objectMapper = new ObjectMapper();
-
         try {
-            new ObjectMapper().writeValue(new File(FILE_PATH), this.paarListe);
+            sessionSaver.saveSession(this.paarListe);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -103,16 +100,11 @@ public class Rechtschreibtrainer {
      * @return void
      */
     public void loadSession() {
-        //mithilfe ObjectMapper von com.fasterxml.jackson.core:jackson-databind:2.15.2 wird die Liste aus dem json-file geladen
-        ObjectMapper objectMapper = new ObjectMapper();
-
         try {
-            File sessionFile = new File(FILE_PATH);
-
-            if (sessionFile.exists()) {
-                paarListe = objectMapper.readValue(sessionFile, new TypeReference<List<Paar>>() {});
+            List<Paar> loadedSession = sessionSaver.loadSession();
+            if (loadedSession != null) {
+                paarListe = loadedSession;
             } else {
-                // falls nicht existent
                 paarListe = new ArrayList<>();
                 System.out.println("Error: kein Session-File");
             }

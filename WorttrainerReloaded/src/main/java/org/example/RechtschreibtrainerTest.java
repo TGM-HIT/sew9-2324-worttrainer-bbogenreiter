@@ -12,7 +12,8 @@ public class RechtschreibtrainerTest {
 
     @BeforeEach
     public void setUp() {
-        trainer = new Rechtschreibtrainer(0);
+        SessionSaver sessionsaver;
+        trainer = new Rechtschreibtrainer(0, sessionsaver = new JsonSessionSaver());
     }
 
     @Test
