@@ -22,15 +22,20 @@ public class Rechtschreibtrainer {
     private int alleVersuche;
     private int richtigeVersuche;
     //FILE_PATH muss an System angepasst werden
-    private final String FILE_PATH = "C:\\Users\\Franz\\OneDrive\\Schule5DHIT\\SEW\\Modul09a\\WorttrainerReloaded\\src\\main\\resources\\session.json";
+    private final String FILE_PATH = "C:\\Users\\bianc\\OneDrive\\Schule5DHIT\\SEW\\Modul09a\\WorttrainerReloaded\\src\\main\\files\\session.json";
 
     /**
      * Der Konstruktor, der das Spiel startet
      */
-    public Rechtschreibtrainer() {
+    public Rechtschreibtrainer(int startOrNot) {
         //lädt die Paare aus der session.json und startet.
-        this.loadSession();
-        this.showSelection();
+        if(startOrNot == 1){
+            this.loadSession();
+            this.showSelection();
+        }else if(startOrNot==0){
+            this.loadSession();
+        }
+
     }
 
     /**
@@ -209,5 +214,13 @@ public class Rechtschreibtrainer {
                 displayImageAndTakeGuess();
             }
         }
+    }
+
+    public Paar getAktPaar() {
+        return this.aktPaar;
+    }
+
+    public List<Paar> getPaarListe() {
+        return this.paarListe;
     }
 }

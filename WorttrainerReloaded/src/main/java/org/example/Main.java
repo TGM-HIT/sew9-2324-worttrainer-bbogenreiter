@@ -7,6 +7,6 @@ package org.example;
 public class Main {
     public static void main(String[] args) {
         //startet den Rechtschreibtrainer
-        new Rechtschreibtrainer();
+        new Rechtschreibtrainer(1);
     }
 }
